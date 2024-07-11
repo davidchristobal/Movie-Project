@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import axios from 'axios';
@@ -13,12 +14,14 @@ const DB = new pg.Pool({
     connectionString:process.env.DATABASE_URL,
 });
 
-SERVER.use(express.static("public"));
+SERVER.use(cors());
 SERVER.use(express.json());
+SERVER.use(express.static("public"));
 
+// fetchMovieData gets data from TMDB api needed for database
 const fetchMovieData = async () => {
     try {
-        let response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
+        let response = await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}`);
 
         return response.data.results;
     } catch (error) {
